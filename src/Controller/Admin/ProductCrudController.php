@@ -3,6 +3,8 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Product;
+use App\Service\StripeService;
+use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
@@ -13,6 +15,12 @@ use Vich\UploaderBundle\Form\Type\VichFileType;
 
 class ProductCrudController extends AbstractCrudController
 {
+    public function __construct(
+        private StripeService $stripeService 
+    ) {
+        
+    }
+
     public static function getEntityFqcn(): string
     {
         return Product::class;
@@ -41,5 +49,34 @@ class ProductCrudController extends AbstractCrudController
 
         yield TextField::new('stripePriceId', 'Identifiant Prix Stripe')
             ->hideWhenCreating();
+    }
+
+    public function persistEntity(EntityManagerInterface $entityManager, $entityInstance): void
+    {
+        /** @var Product $product */
+        $product = $entityInstance;
+
+        // Créer le produit Stripe
+        $stripeProduct = $this->stripeService->createProduct($product);
+        $product->setStripeProductId($stripeProduct->id);
+
+        // Créer le prix Stripe
+        $stripePrice = $this->stripeService->createPrice($product);
+        $product->setStripePriceId($stripePrice->id);
+
+        
+
+        // Persister l'entité dans la base de données
+        parent::persistEntity($entityManager, $entityInstance);
+    }
+
+    public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
+    {
+            /** @var Product $product */
+        $product = $entityInstance;
+
+        $this->stripeService->updateProduct($product);
+         
+            parent::updateEntity($entityManager,$entityInstance); 
     }
 }
