@@ -3,60 +3,66 @@
 namespace App\Service;
 
 use App\Entity\Product;
-use Stripe\Stripe;
 use Stripe\StripeClient;
 use Stripe\Price;
-
+use Stripe\Checkout\Session;
 
 class StripeService
 {
     private StripeClient $stripe;
 
-    public function createproduct(product $product): \stripe\product
+    public function __construct(string $stripeSecretKey)
     {
-        return $this->getStripe()->products->create([
-            'name' => $product->getname(),
+        $this->stripe = new StripeClient($stripeSecretKey);
+    }
+
+    public function createProduct(Product $product): \Stripe\Product
+    {
+        return $this->stripe->products->create([
+            'name' => $product->getName(),
             'description' => $product->getDescription(),
-            'active' => $product->isActive()
-
+            'active' => $product->isActive(),
         ]);
     }
 
-    public function createPrice(product $product): Price
+    public function createPrice(Product $product): Price
     {
-
-        return $this->getStripe()->prices->create([
-
-            'unit_amount' => $product->getPrice(),
-            'currency' => 'EUR' ,
-            'product' => $product->getStripeProductId()
-
+        return $this->stripe->prices->create([
+            'unit_amount' => $product->getPrice() * 100, // Convert to cents
+            'currency' => 'eur',
+            'product' => $product->getStripeProductId(),
         ]);
-
-
     }
 
-
-    public function updateProduct(product $product): \Stripe\Product
+    public function updateProduct(Product $product): \Stripe\Product
     {
-        return $this->getStripe()->products->update([
-            'name' => $product->getname(),
-            'description' => $product->getDescription(),
-            'active' => $product->isActive()
-        ]);
-         
-    }
-    private function getStripe(): StripeClient
-    {
-        return $this->stripe ??= new StripeClient(
-            $_ENV['STRIPE_API_SECRET']
+        return $this->stripe->products->update(
+            $product->getStripeProductId(),
+            [
+                'name' => $product->getName(),
+                'description' => $product->getDescription(),
+                'active' => $product->isActive(),
+            ]
         );
-
     }
 
+    public function createCheckoutSession(array $lineItems): Session
+    {
+        $successUrl = $_ENV['STRIPE_SUCCESS_URL'] ?? null;
+        $cancelUrl = $_ENV['STRIPE_CANCEL_URL'] ?? null;
+
+        if (!$successUrl || !$cancelUrl) {
+            throw new \RuntimeException('Les variables d\'environnement STRIPE_SUCCESS_URL ou STRIPE_CANCEL_URL ne sont pas définies.');
+        }
+
+        return $this->stripe->checkout->sessions->create([
+            'payment_method_types' => ['card'],
+            'line_items' => $lineItems,
+            'mode' => 'payment',
+            'success_url' => $successUrl,
+            'cancel_url' => $cancelUrl,
+           
+        ]);
+    }
 }
-    
-
-
-
 

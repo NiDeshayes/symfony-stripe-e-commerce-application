@@ -1,18 +1,32 @@
+{# templates/base.html.twig #}
 <!DOCTYPE html>
-<html lang="fr">
-    <head>
-        <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text></svg>">
-        {% block stylesheets %}
-            {{ encore_entry_link_tags('app') }}
-        {% endblock %}
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Stubborn{% endblock %}</title>
+    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <img src="{{ asset('images/products/logo.png') }}" alt="Stubborn">
+            <div class="slogan">Don't compromise on your look</div>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="{{ path('app_home_index') }}">Accueil</a></li>
+                <li><a href="{{ path('products') }}">Products</a></li>
+                <li><a href="{{ path('cart') }}">Cart</a></li>
+            </ul>
+        </nav>
+    </header>
 
-        {% block javascripts %}
-            {{ encore_entry_script_tags('app') }}
-        {% endblock %}
-    </head>
-    <body>
+    <main>
         {% block body %}{% endblock %}
-    </body>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Stubborn. All rights reserved.</p>
+    </footer>
+</body>
 </html>

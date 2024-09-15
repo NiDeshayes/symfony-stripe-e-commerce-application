@@ -1,0 +1,40 @@
+{# templates/cart/index.html.twig #}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Your Cart{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1>Your Cart</h1>
+        {% if cartItems|length > 0 %}
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in cartItems %}
+                        <tr>
+                            <td>{{ item.product.name }}</td>
+                            <td>{{ item.quantity }}</td>
+                            <td>{{ item.priceInEuros|number_format(2, ',', ' ') }} €</td>
+                            <td>
+                                <a href="{{ path('remove_from_cart', { id: item.product.id }) }}" class="btn btn-danger">Remove</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <h3>Total: {{ total|number_format(2, ',', ' ') }} €</h3>
+            <a href="{{ path('checkout') }}" class="btn btn-primary">Proceed to Checkout</a>
+        {% else %}
+            <p>Your cart is empty.</p>
+            <a href="{{ path('products') }}" class="btn btn-primary">Return to Products</a>
+        {% endif %}
+    </div>
+{% endblock %}

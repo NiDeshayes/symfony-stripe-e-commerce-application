@@ -1,0 +1,36 @@
+{# templates/products/index.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <main>
+        <h1>Nos Produits</h1>
+
+        <!-- Formulaire de filtre -->
+        <form method="get" action="{{ path('products') }}" class="filter-form">
+            <label for="price_range">Filtrer par prix :</label>
+            <select name="price_range" id="price_range">
+                <option value="">Tous les prix</option>
+                <option value="10-29" {% if selectedPriceRange == '10-29' %}selected{% endif %}>10-29 EUR</option>
+                <option value="29-35" {% if selectedPriceRange == '29-35' %}selected{% endif %}>29-35 EUR</option>
+                <option value="35-50" {% if selectedPriceRange == '35-50' %}selected{% endif %}>35-50 EUR</option>
+            </select>
+            <button type="submit">Filtrer</button>
+        </form>
+
+        <div class="product-list">
+            {% for product in products %}
+                <div class="product">
+                    <h2>{{ product.name }}</h2>
+                    <p>{{ product.description }}</p>
+                    <p>{{ (product.price / 100)|number_format(2, ',', ' ') }} EUR</p>
+                    {% if product.imageName %}
+                        <img src="{{ asset('images/products/' ~ product.imageName) }}" alt="{{ product.name }}" class="product-image">
+                    {% endif %}
+                    <a href="{{ path('product_detail', { id: product.id }) }}" class="btn">Voir les détails</a>
+                </div>
+            {% else %}
+                <p>Aucun produit disponible.</p>
+            {% endfor %}
+        </div>
+    </main>
+{% endblock %}
