@@ -1,40 +1,56 @@
 {# templates/cart/index.html.twig #}
-
 {% extends 'base.html.twig' %}
-
-{% block title %}Your Cart{% endblock %}
 
 {% block body %}
     <div class="container">
-        <h1>Your Cart</h1>
-        {% if cartItems|length > 0 %}
-            <table class="table">
+        <h1 class="page-title">Your Cart</h1>
+
+        {% if cartItems is empty %}
+            <p>Your cart is empty.</p>
+        {% else %}
+            <table class="cart-table">
                 <thead>
                     <tr>
                         <th>Product</th>
                         <th>Quantity</th>
                         <th>Price</th>
+                        <th>Total</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for item in cartItems %}
                         <tr>
-                            <td>{{ item.product.name }}</td>
-                            <td>{{ item.quantity }}</td>
-                            <td>{{ item.priceInEuros|number_format(2, ',', ' ') }} €</td>
                             <td>
-                                <a href="{{ path('remove_from_cart', { id: item.product.id }) }}" class="btn btn-danger">Remove</a>
+                                <div class="product-info">
+                                    <img src="{{ asset('images/products/' ~ item.product.imageName) }}" alt="{{ item.product.name }}" class="product-image">
+                                    <span class="product-name">{{ item.product.name }}</span>
+                                </div>
+                            </td>
+                            <td>{{ item.quantity }}</td>
+                            <td>{{ item.product.price / 100 | number_format(2, '.', ',') }} €</td>
+                            <td>{{ (item.product.price * item.quantity) / 100 | number_format(2, '.', ',') }} €</td>
+                            <td>
+                                <a href="{{ path('cart_remove', {'id': item.product.id}) }}" class="btn btn-danger" onclick="return confirm('Are you sure you want to remove this item?');">Remove</a>
                             </td>
                         </tr>
                     {% endfor %}
                 </tbody>
             </table>
-            <h3>Total: {{ total|number_format(2, ',', ' ') }} €</h3>
-            <a href="{{ path('checkout') }}" class="btn btn-primary">Proceed to Checkout</a>
-        {% else %}
-            <p>Your cart is empty.</p>
-            <a href="{{ path('products') }}" class="btn btn-primary">Return to Products</a>
+
+            <div class="cart-summary">
+                <h2>Total: {{ total / 100 | number_format(2, '.', ',') }} €</h2>
+                <a href="{{ path('checkout') }}" class="btn btn-primary">Proceed to Checkout</a>
+            </div>
         {% endif %}
+
+        <footer class="company-info">
+            <div>
+                <p><strong>Company Name:</strong> Stubborn</p>
+                <p><strong>Address:</strong> Piccadilly Circus, London W1J 0DA, UK</p>
+                <p><strong>Contact:</strong> stubborn@blabla.com</p>
+                <p><strong>Slogan:</strong> Don't compromise on your look</p>
+            </div>
+        </footer>
     </div>
 {% endblock %}

@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <title>{% block title %}Stubborn{% endblock %}</title>
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+    <link rel="icon" type="image/png" href="{{ asset('images/products/logo.png') }}">
 </head>
 <body>
     <header>
@@ -15,8 +16,8 @@
         <nav>
             <ul>
                 <li><a href="{{ path('app_home_index') }}">Accueil</a></li>
-                <li><a href="{{ path('products') }}">Products</a></li>
-                <li><a href="{{ path('cart') }}">Cart</a></li>
+                <li><a href="{{ path('products') }}">Boutique</a></li>
+                <li><a href="{{ path('cart') }}">Panier</a></li>
             </ul>
         </nav>
     </header>

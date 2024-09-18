@@ -3,17 +3,17 @@
 namespace App\Service;
 
 use App\Entity\Product;
-use Stripe\StripeClient;
+use Stripe\Checkout\Session as CheckoutSession;
 use Stripe\Price;
-use Stripe\Checkout\Session;
+use Stripe\StripeClient;
 
 class StripeService
 {
     private StripeClient $stripe;
 
-    public function __construct(string $stripeSecretKey)
+    public function __construct(string $stripeApiSecret)
     {
-        $this->stripe = new StripeClient($stripeSecretKey);
+        $this->stripe = new StripeClient($stripeApiSecret);
     }
 
     public function createProduct(Product $product): \Stripe\Product
@@ -28,7 +28,7 @@ class StripeService
     public function createPrice(Product $product): Price
     {
         return $this->stripe->prices->create([
-            'unit_amount' => $product->getPrice() * 100, // Convert to cents
+            'unit_amount' => $product->getPrice(),  // Assurez-vous que getPrice retourne déjà en centimes
             'currency' => 'eur',
             'product' => $product->getStripeProductId(),
         ]);
@@ -36,33 +36,21 @@ class StripeService
 
     public function updateProduct(Product $product): \Stripe\Product
     {
-        return $this->stripe->products->update(
-            $product->getStripeProductId(),
-            [
-                'name' => $product->getName(),
-                'description' => $product->getDescription(),
-                'active' => $product->isActive(),
-            ]
-        );
+        return $this->stripe->products->update($product->getStripeProductId(), [
+            'name' => $product->getName(),
+            'description' => $product->getDescription(),
+            'active' => $product->isActive(),
+        ]);
     }
 
-    public function createCheckoutSession(array $lineItems): Session
+    public function createCheckoutSession(array $lineItems, string $successUrl, string $cancelUrl): CheckoutSession
     {
-        $successUrl = $_ENV['STRIPE_SUCCESS_URL'] ?? null;
-        $cancelUrl = $_ENV['STRIPE_CANCEL_URL'] ?? null;
-
-        if (!$successUrl || !$cancelUrl) {
-            throw new \RuntimeException('Les variables d\'environnement STRIPE_SUCCESS_URL ou STRIPE_CANCEL_URL ne sont pas définies.');
-        }
-
         return $this->stripe->checkout->sessions->create([
             'payment_method_types' => ['card'],
             'line_items' => $lineItems,
             'mode' => 'payment',
             'success_url' => $successUrl,
             'cancel_url' => $cancelUrl,
-           
         ]);
     }
 }
-

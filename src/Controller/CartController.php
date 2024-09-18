@@ -1,6 +1,5 @@
 <?php
 
-// src/Controller/CartController.php
 namespace App\Controller;
 
 use App\Entity\Product;
@@ -8,20 +7,21 @@ use App\Service\StripeService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class CartController extends AbstractController
 {
-    private EntityManagerInterface $entityManager;
-    private StripeService $stripeService;
+    private $entityManager;
+    private $stripeService;
+    private $urlGenerator;
 
-    public function __construct(EntityManagerInterface $entityManager, StripeService $stripeService)
+    public function __construct(EntityManagerInterface $entityManager, StripeService $stripeService, UrlGeneratorInterface $urlGenerator)
     {
         $this->entityManager = $entityManager;
         $this->stripeService = $stripeService;
+        $this->urlGenerator = $urlGenerator;
     }
 
     #[Route('/cart', name: 'cart')]
@@ -37,13 +37,11 @@ class CartController extends AbstractController
         foreach ($cart as $id => $quantity) {
             $product = $productRepository->find($id);
             if ($product) {
-                $priceInEuros = $product->getPrice() / 100; // Conversion en euros
                 $cartItems[] = [
                     'product' => $product,
                     'quantity' => $quantity,
-                    'priceInEuros' => $priceInEuros
                 ];
-                $total += $priceInEuros * $quantity;
+                $total += $product->getPrice() * $quantity;
             }
         }
 
@@ -53,47 +51,50 @@ class CartController extends AbstractController
         ]);
     }
 
-    #[Route('/cart/remove/{id}', name: 'remove_from_cart')]
-    public function removeFromCart(int $id, SessionInterface $session): RedirectResponse
+    #[Route('/cart/remove/{id}', name: 'cart_remove')]
+    public function remove(int $id, SessionInterface $session): Response
     {
         $cart = $session->get('cart', []);
-        
         if (isset($cart[$id])) {
-            unset($cart[$id]); // Remove item from cart
+            unset($cart[$id]);
+            $session->set('cart', $cart);
         }
-
-        $session->set('cart', $cart);
 
         return $this->redirectToRoute('cart');
     }
 
     #[Route('/checkout', name: 'checkout')]
-    public function checkout(SessionInterface $session): RedirectResponse
+    public function checkout(SessionInterface $session): Response
     {
+        // Préparer les articles du panier pour Stripe
         $cart = $session->get('cart', []);
-        
+        $productRepository = $this->entityManager->getRepository(Product::class);
         $lineItems = [];
 
-        // Créez une session Stripe Checkout
         foreach ($cart as $id => $quantity) {
-            $product = $this->entityManager->getRepository(Product::class)->find($id);
+            $product = $productRepository->find($id);
             if ($product) {
-                $priceInCents = $product->getPrice();
                 $lineItems[] = [
                     'price_data' => [
                         'currency' => 'eur',
                         'product_data' => [
                             'name' => $product->getName(),
                         ],
-                        'unit_amount' => $priceInCents,
+                        'unit_amount' => $product->getPrice(), // Assurez-vous que getPrice retourne déjà en centimes
                     ],
                     'quantity' => $quantity,
                 ];
             }
         }
 
-        $session = $this->stripeService->createCheckoutSession($lineItems);
+        // Créer une session de paiement Stripe
+        $session = $this->stripeService->createCheckoutSession(
+            $lineItems,
+            $this->urlGenerator->generate('checkout_success', [], UrlGeneratorInterface::ABSOLUTE_URL),
+            $this->urlGenerator->generate('checkout_cancel', [], UrlGeneratorInterface::ABSOLUTE_URL)
+        );
 
-        return $this->redirect($session->url, 303);
+        // Rediriger vers l'URL de paiement Stripe
+        return $this->redirect($session->url);
     }
 }
