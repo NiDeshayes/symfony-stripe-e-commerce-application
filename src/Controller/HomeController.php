@@ -1,7 +1,7 @@
-    <?php
+<?php
 
-    // src/Controller/HomeController.php
-    namespace App\Controller;
+// src/Controller/HomeController.php
+namespace App\Controller;
 
     use App\Entity\Product;
     use Doctrine\ORM\EntityManagerInterface;
