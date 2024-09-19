@@ -7,6 +7,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ArrayField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\PasswordField; // Import correct pour le champ Password
 
 class UserCrudController extends AbstractCrudController
 {
@@ -21,5 +22,6 @@ class UserCrudController extends AbstractCrudController
         yield EmailField::new('email', 'Email');
         yield TextField::new('deliveryAddress', 'Adresse de livraison');
         yield ArrayField::new('roles', 'Rôles');
+       
     }
 }
