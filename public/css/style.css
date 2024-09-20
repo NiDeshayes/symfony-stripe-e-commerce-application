@@ -1,24 +1,20 @@
 /* public/css/style.css */
 
 /* Réinitialisation des marges et du padding */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
 
 /* Style du corps de la page */
 body {
     font-family: 'Helvetica Neue', Arial, sans-serif;
     background-color: #f5f5f5;
     color: #333;
+    padding-top: 60px; /* Ajouter un espace pour la navbar fixe */
     padding-bottom: 60px; /* Ajouter un espace pour le pied de page */
 }
 
 /* Navbar */
 header {
-    background-color: #fff;
-    color: #333;
+    background-color: #007bff; /* Couleur de fond */
+    color: #fff; /* Couleur du texte */
     padding: 10px 20px;
     position: fixed; /* Fixer l'en-tête en haut de la page */
     width: 100%;
@@ -28,10 +24,11 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid #ddd; /* Ajouter une bordure inférieure */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Bordure blanche transparente */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Ombre légère */
 }
 
+/* Menu de navigation */
 nav ul {
     list-style: none;
     display: flex;
@@ -40,19 +37,32 @@ nav ul {
 }
 
 nav ul li {
-    margin: 0 20px;
+    margin: 0 15px; /* Espace entre les éléments */
 }
 
 nav ul li a {
-    color: #333;
+    color: #fff; /* Couleur des liens */
     text-decoration: none;
-    font-weight: 600; /* Augmenter le poids de la police */
+    font-weight: 600; /* Poids de la police */
     font-size: 16px;
+    transition: color 0.3s ease; /* Transition pour l'effet de survol */
 }
 
 nav ul li a:hover {
-    text-decoration: underline;
+    color: #e1e1e1; /* Couleur au survol */
 }
+
+/* Logo */
+.logo {
+    display: flex;
+    align-items: center;
+}
+
+.logo img {
+    height: 40px; /* Ajuster la taille du logo */
+    width: auto;
+}
+
 
 /* Logo */
 .logo {
@@ -75,7 +85,7 @@ main {
 /* Titres */
 h1, h2, h3 {
     color: #333;
-    margin-bottom: 10px;
+    margin-bottom: 20px; /* Augmenter l'espace en dessous des titres */
 }
 
 /* Tables */
@@ -138,20 +148,19 @@ button {
 
 button:hover {
     background-color: #0056b3;
-    transform: translateY(-2px); /* Ajouter un effet de levée au survol */
+    transform: translateY(-2px); 
 }
 
 /* Footer */
 footer {
-    background-color: #fff;
+    background-color: #007bff;
     color: #333;
     text-align: center;
-    padding: 15px 0;
-    position: fixed; /* Fixer le pied de page en bas de la page */
+    padding: 15px 0; 
     width: 100%;
     bottom: 0;
     left: 0;
-    border-top: 1px solid #ddd; /* Ajouter une bordure supérieure */
+    border-top: 1px solid #ddd; 
 }
 
 /* Product List */
@@ -338,35 +347,31 @@ form button:hover {
 }
 
 .product-info h1 {
+    margin-bottom: 20px;
     font-size: 2rem;
-    margin-bottom: 10px;
 }
 
 .product-info p {
-    font-size: 1.25rem;
     margin-bottom: 20px;
 }
 
 .product-info form {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    margin-top: 20px;
 }
 
 .product-info select {
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 5px;
-    margin-bottom: 10px;
     font-size: 16px;
+    margin-right: 10px;
 }
 
 .product-info button {
-    width: auto;
-    padding: 10px 20px;
     background-color: #007bff;
     color: #fff;
     border: none;
+    padding: 10px 20px;
     border-radius: 5px;
     cursor: pointer;
     font-size: 16px;
@@ -380,9 +385,36 @@ form button:hover {
 
 .product-detail .company-info {
     margin-top: 30px;
-    padding: 15px;
+}
+
+/* Page de connexion */
+.login-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
     background-color: #f5f5f5;
-    border: 1px solid #ddd;
+}
+
+.login-form {
+    background-color: #fff;
+    padding: 20px;
     border-radius: 8px;
-    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Ajouter une ombre légère */
+    width: 100%;
+    max-width: 400px;
+}
+
+.login-form h1 {
+    margin-bottom: 20px;
+    font-size: 2rem;
+    color: #007bff;
+}
+
+.login-form input {
+    margin-bottom: 15px;
+}
+
+.login-form button {
+    width: 100%;
 }

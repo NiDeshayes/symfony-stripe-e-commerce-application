@@ -23,3 +23,8 @@ services:
     App\Service\StripeService:
         arguments:
             $stripeApiSecret: '%stripe_api_secret%'
+
+    # Register AccessDeniedListener
+    App\EventListener\AccessDeniedListener:
+        tags:
+            - { name: kernel.event_listener, event: kernel.exception }

@@ -17,6 +17,11 @@
                 <li><a href="{{ path('app_home_index') }}">Accueil</a></li>
                 <li><a href="{{ path('products') }}">Boutique</a></li>
                 <li><a href="{{ path('cart') }}">Panier</a></li>
+                
+                {% if is_granted('ROLE_ADMIN') %}
+                    <li><a href="{{ path('app_admin_index') }}">Admin</a></li>
+                {% endif %}
+                
                 {% if is_granted('IS_AUTHENTICATED_FULLY') %}
                     <li><a href="{{ path('app_logout') }}">Se déconnecter</a></li>
                 {% else %}
