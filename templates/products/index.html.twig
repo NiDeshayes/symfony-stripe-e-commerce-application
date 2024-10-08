@@ -22,7 +22,7 @@
                 <div class="product">
                     <h2>{{ product.name }}</h2>
                     <p>{{ product.description }}</p>
-                    <p>{{ (product.price / 100)|number_format(2, ',', ' ') }} EUR</p>
+                    <p>{{ (product.price )|number_format(2, ',', ' ') }} EUR</p>
                     {% if product.imageName %}
                         <img src="{{ asset('images/products/' ~ product.imageName) }}" alt="{{ product.name }}" class="product-image">
                     {% endif %}

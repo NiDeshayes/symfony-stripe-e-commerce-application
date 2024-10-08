@@ -28,7 +28,7 @@ class StripeService
     public function createPrice(Product $product): Price
     {
         return $this->stripe->prices->create([
-            'unit_amount' => $product->getPrice(),  // Assurez-vous que getPrice retourne déjà en centimes
+            'unit_amount' => $product->getPrice() * 100,  // Multiplier le prix par 100
             'currency' => 'eur',
             'product' => $product->getStripeProductId(),
         ]);

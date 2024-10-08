@@ -34,8 +34,8 @@ class ProductsController extends AbstractController
             $queryBuilder
                 ->andWhere('p.price >= :minPrice')
                 ->andWhere('p.price <= :maxPrice')
-                ->setParameter('minPrice', $minPrice * 100)
-                ->setParameter('maxPrice', $maxPrice * 100);
+                ->setParameter('minPrice', $minPrice )
+                ->setParameter('maxPrice', $maxPrice );
         }
 
         $products = $queryBuilder->getQuery()->getResult();

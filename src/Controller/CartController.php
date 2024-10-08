@@ -80,7 +80,7 @@ class CartController extends AbstractController
                         'product_data' => [
                             'name' => $product->getName(),
                         ],
-                        'unit_amount' => $product->getPrice(), // Assurez-vous que getPrice retourne déjà en centimes
+                        'unit_amount' => $product->getPrice()* 100, // Assurez-vous que getPrice retourne déjà en centimes
                     ],
                     'quantity' => $quantity,
                 ];

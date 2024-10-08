@@ -28,8 +28,8 @@
                                 </div>
                             </td>
                             <td>{{ item.quantity }}</td>
-                            <td>{{ item.product.price / 100 | number_format(2, '.', ',') }} €</td>
-                            <td>{{ (item.product.price * item.quantity) / 100 | number_format(2, '.', ',') }} €</td>
+                            <td>{{ item.product.price  | number_format(2, '.', ',') }} €</td>
+                            <td>{{ (item.product.price * item.quantity)  | number_format(2, '.', ',') }} €</td>
                             <td>
                                 <a href="{{ path('cart_remove', {'id': item.product.id}) }}" class="btn btn-danger" onclick="return confirm('Are you sure you want to remove this item?');">Remove</a>
                             </td>
@@ -39,7 +39,7 @@
             </table>
 
             <div class="cart-summary">
-                <h2>Total: {{ total / 100 | number_format(2, '.', ',') }} €</h2>
+                <h2>Total: {{ total  | number_format(2, '.', ',') }} €</h2>
                 <a href="{{ path('checkout') }}" class="btn btn-primary">Proceed to Checkout</a>
             </div>
         {% endif %}
